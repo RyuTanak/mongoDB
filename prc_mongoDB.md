@@ -55,6 +55,62 @@
     ```
     ※testというDBが表示されないのは、show dbsで表示されるデータベースはコレクションが存在するもののみが表示されるようになっているため  
 
+- Databaseの作成
+    ```shell
+    test> use myDatabase
+    switched to db myDatabase
+    myDatabase> 
+    ```
+    作成と同時に操作対象のDBが切り替わる  
+
+- Collectionの作成
+    ```shell
+    myDatabase> db.myCollection.insert({name: "John", age: 30, city: "New York"})
+
+    DeprecationWarning: Collection.insert() is deprecated. Use insertOne, insertMany, or bulkWrite.
+    {
+      acknowledged: true,
+      insertedIds: { '0': ObjectId('6690be112a97086d4e482f8b') }
+    }
+    ```
+    これでmyCollectionという名前のコレクションが作成され、その中に一つのドキュメントが挿入される  
+
+- Documentの検索
+    ```shell
+    myDatabase> db.myCollection.find({name: "John"})
+    
+    [
+      {
+        _id: ObjectId('6690be112a97086d4e482f8b'),
+        name: 'John',
+        age: 30,
+        city: 'New York'
+      }
+    ]
+    ```
+    ObjectIdというのはコレクションの中で一意に必ず割り振られるID  
+
+- Documentの更新
+    ```shell
+    myDatabase> db.myCollection.update({name: "John"}, {$set: {age: 31}})
+
+    DeprecationWarning: Collection.update() is deprecated. Use updateOne, updateMany, or bulkWrite.
+    {
+        acknowledged: true,
+        insertedId: null,
+        matchedCount: 1,
+        modifiedCount: 1,
+        upsertedCount: 0
+    }
+    ```
+
+- Documentの削除
+    ```shell
+    myDatabase> db.myCollection.remove({name: "John"})
+
+    DeprecationWarning: Collection.remove() is deprecated. Use deleteOne, deleteMany, findOneAndDelete, or bulkWrite.
+    { acknowledged: true, deletedCount: 1 }
+    ```
 
 
 
