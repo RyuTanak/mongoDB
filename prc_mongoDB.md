@@ -89,6 +89,30 @@
     ]
     ```
     ObjectIdというのはコレクションの中で一意に必ず割り振られるID  
+    ObjectIdが一意であるため、ドキュメントが被っても登録される  
+    ```shell
+    myDatabase> db.myCollection.find({name: "John"})
+    [
+        {
+            _id: ObjectId('6690cf4138fd7a7beb482f8b'),
+            name: 'John',
+            age: 30,
+            city: 'New York'
+        },
+        {
+            _id: ObjectId('6690cf4638fd7a7beb482f8c'),
+            name: 'John',
+            age: 31,
+            city: 'New York'
+        },
+        {
+            _id: ObjectId('6690cf6238fd7a7beb482f8d'),
+            name: 'John',
+            age: 31,
+            city: 'New York'
+        }
+    ]
+    ```
 
 - Documentの更新
     ```shell
