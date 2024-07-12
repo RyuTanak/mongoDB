@@ -3,7 +3,14 @@
 ## 目次
 
 - [学習内容](#学習内容)
-
+- [mongodbとは](#mongodbとは)
+- [RHELとは](#rhelとは)
+- [osの違いについて](#osの違いについて)
+- [mongoDBのインストール(ローカル環境)](#mongodbのインストールローカル環境)
+- [mongoDBのインストール(ローカル環境、手動ダウンロード・インストール)](#mongodbのインストールローカル環境手動ダウンロードインストール)
+- [mongoDBのインストール(EC2のRHELで試してみる)](#mongodbのインストールec2のrhelで試してみる)
+- [mongoDB(v5.0)のインストール(EC2 Ubuntu 24.04 LTS) ★成功](#mongodbv50のインストールec2-ubuntu-2404-lts)
+- [mongoDBの練習（別ページ）](./prc_mongoDB.md)
 
 ## 学習内容
 
@@ -11,7 +18,7 @@
 OS：RHELv7.9  
 ミドルウェア：mongoDB  
 
-最終的には、EC2インスタンスのmongoDBのバージョンをv4.4→v5.0へ上げる方ほを知る  
+最終的には、EC2インスタンスのmongoDBのバージョンをv4.4→v5.0へ上げる方法を知る  
 
 
 ## mongoDBとは
@@ -150,6 +157,12 @@ Codename:       jammy
 
 RedHatOSを用意して、mongoDBをインストール  
 
+```bash
+cat /etc/redhat-release
+Red Hat Enterprise Linux release 9.4 (Plow)
+```
+→RedHadの9.4を使用
+
 - MongoDBの公式GPGキーを追加します。
   ```
   sudo rpm --import https://www.mongodb.org/static/pgp/server-4.4.asc
@@ -162,7 +175,58 @@ RedHatOSを用意して、mongoDBをインストール
   公開鍵暗号方式を利用したデータの暗号化とデジタル署名の生成・検証に使用されるツール  
   <img src="./img/2.png" width="50%">
 
+- 上記のキーは使用しないで、repositiryからインストール
+  nanoが入っていないのでインストール  
+  ```
+  sudo yum update
+  sudo yum install -y nano
+  ```
+  リポジトリの作成  
+  ```
+  sudo nano /etc/yum.repos.d/mongodb-org-4.4.repo
+  ```
+  リポジトリの内容  
+  ```
+  [mongodb-org-4.4]
+  name=MongoDB Repository
+  baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.4/x86_64/
+  gpgcheck=1
+  enabled=1
+  gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
+  ```
+  mongoDBのインストール  
+  ```
+  sudo yum install -y mongodb-org
+  ```
+  やはり以下のエラーがでる。。。  
+  ```
+  Error: Unable to find a match: mongodb-org
+  ```
 
+## mongoDB(v5.0)のインストール(EC2 Ubuntu 24.04 LTS)
 
-
-https://qiita.com/airkoda/items/a88554644f040a627769
+  結局以下の流れでインストールできた。  
+  ```shell
+  wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
+  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+  sudo apt-get update
+  sudo apt-get install -y mongodb-org
+  ```
+  installコマンドで以下のエラーがでる。  
+  ```
+  The following packages have unmet dependencies:
+  mongodb-org-mongos : Depends: libssl1.1 (>= 1.1.1) but it is not installable
+  mongodb-org-server : Depends: libssl1.1 (>= 1.1.1) but it is not installable
+  mongodb-org-shell : Depends: libssl1.1 (>= 1.1.1) but it is not installable
+  E: Unable to correct problems, you have held broken packages.
+  ```
+  そのため、libssl1.1を別途インストール  
+  ```shell
+  echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc/apt/sources.list.d/focal-security.list
+  sudo apt-get update
+  sudo apt-get install libssl1.1
+  sudo apt-get install -y mongodb-org
+  sudo rm /etc/apt/sources.list.d/focal-security.list
+  ```
+  これでmongoDBのインストールが完了  
+  mongoDBの操作等については[こちら](prc_mongoDB.md)で行う  
