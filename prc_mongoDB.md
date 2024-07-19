@@ -3,9 +3,12 @@
 ## 目次
 
 - [mongoDBの基本コマンド]
-
+- [indexとは]
+- [Replica Setとは]
 
 ## mongoDBの基本コマンド
+
+[参考情報](https://qiita.com/airkoda/items/a88554644f040a627769)
 
 - mongoDBのバージョン確認
     ```shell
@@ -136,6 +139,29 @@
     { acknowledged: true, deletedCount: 1 }
     ```
 
+## RDBMS用語との比較
 
+|RDBMS用語|MongoDB用語|
+|-|-|
+|database|database|
+|table|collection|
+|record(row)|document|
+|column|field|
 
-https://qiita.com/airkoda/items/a88554644f040a627769
+## indexとは
+
+クエリの実行を効率化できるもの  
+
+indexの作成方法
+```
+db.collection.createIndex( {<インデックスに指定したいキー名>: <昇降順>} )
+```
+<昇降>
+
+birth yearをindexとした場合
+```
+db.friends.find({birth year: '1999'})
+```
+これで検索は早くなる
+
+## 
